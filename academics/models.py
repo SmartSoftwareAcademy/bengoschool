@@ -36,13 +36,13 @@ class AcademicSession(models.Model):
         ordering = ["-name"]
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - ({self.from_date}-{self.to_date})'
 
 
 class AcademicTerm(models.Model):
     """Academic Term"""
 
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20,choices=(("Term I","Term I"),("Term II","Term II"),("Term III","Term III")), unique=True)
     current = models.BooleanField(default=True)
 
     class Meta:
@@ -53,12 +53,12 @@ class AcademicTerm(models.Model):
 
 
 class StudentClass(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    sections = models.ManyToManyField("ClassSection",help_text="Select Custom if class ha no sections")
+    name = models.CharField(max_length=200,choices=(("Form I","Form I"),("Form II","Form II"),("Form III","Form III"),("Form IV","Form IV")), unique=True)
+    sections = models.ManyToManyField("ClassSection",help_text="Select None if class ha no sections")
 
     class Meta:
         verbose_name = "Class"
-        verbose_name_plural = "Classes" 
+        verbose_name_plural = "Classes"
         ordering = ["name"]
 
     def __str__(self):

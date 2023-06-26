@@ -1,11 +1,11 @@
 from django.db import models
-
 from academics.models import *
 from students.models import Student
 from authman.models import *
-from .utils import *
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from grading.models import *
+from django.db.models import Count,Sum
 
 # Create your models here.
 
@@ -20,6 +20,7 @@ class Result(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     test_score = models.IntegerField(default=0)
     exam_score = models.IntegerField(default=0)
+    grade = models.ForeignKey(Grades,on_delete=models.SET_NULL,default=12,blank=True,null=True)
     points_earned = models.PositiveIntegerField(default=0)
 
     class Meta:
@@ -31,5 +32,55 @@ class Result(models.Model):
     def total_score(self):
         return self.test_score + self.exam_score
 
-    def grade(self):
-        return score_grade(self.total_score(), self.subject.course)
+    def mean_grade(self,student, grading_type='points'):
+        overall_grading = OverallGrading.objects.filter(current=True).first()
+        grade = None
+        if overall_grading is None or overall_grading.gradingitems.count() == 0:
+            return None
+        for rule in overall_grading.gradingitems.all():
+            if grading_type == 'points':
+                marks = sum([result.points_earned for result in student.result_set.all() if result.exam_score > 1])
+                range_start, range_end = map(int, rule.points_range.split('-'))
+                if range_start <= marks <= range_end:
+                    grade = rule.grade
+            else:
+                marks = sum([(result.test_score + result.exam_score)
+                            for result in student.result_set.all() if result.exam_score > 1])
+                range_start, range_end = map(int, rule.mark_range.split('-'))
+                if range_start <= marks <= range_end:
+                    grade = rule.grade
+        return grade
+
+    def calculate_subject_position(self):
+        subject_results = Result.objects.filter(
+                session=self.session,
+                term=self.term,
+                current_class=self.current_class,
+                subject=self.subject
+            ).annotate(total_score=Sum('test_score') + Sum('exam_score')).order_by('-total_score')
+
+            # Iterate through the subject results and find the position of the current result
+        position = None
+        for index, result in enumerate(subject_results, start=1):
+            if result == self:
+                position = index
+                break
+
+        # Count the number of students who took the subject
+        total_students = subject_results.count()
+
+        return position
+
+    def total_student(self):
+        subject_results = Result.objects.filter(
+                session=self.session,
+                term=self.term,
+                current_class=self.current_class,
+                subject=self.subject
+            )
+            # Iterate through the subject results and find the position of the current result
+
+        # Count the number of students who took the subject
+        total_students = subject_results.count()
+
+        return total_students

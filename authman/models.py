@@ -83,7 +83,7 @@ class Staff(models.Model):
     others = models.TextField(blank=True)
 
     def __str__(self):
-        return self.admin.email
+        return f"{self.admin.first_name[:1]}.{self.admin.first_name[:1]}"
 
     def get_absolute_url(self):
         return reverse("staff-detail", kwargs={"pk": self.pk})

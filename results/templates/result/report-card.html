@@ -1,63 +1,61 @@
 {% extends 'management/base.html' %}
 {% load static %}
 {% block custom_css %}
-<link rel="{% static 'mystyles/styles.css' %}" type="stylesheet">
 {% endblock custom_css %}
 {% block content %}
-  <div class="container">
-    <div class="card mt-4">
+  {% for key,result in results.items %}
+    <div class="card">
       <div class="card-header">
         <div style="display: flex; align-items: center; justify-content: space-between;">
           {% if school_logo.url %}
-          <img src="{{school_logo.url}}" alt="Your image" class="passport-image" style="border: 2px solid black; float: left;">
+          <img src="{{school_logo.url}}" alt="Your image" class="passport-image" style="border: 1px solid black; float: left;">
           {% else %}
             <img src="{% static 'school_logo/default.png' %}" alt="Your image" class="passport-image" style="border: 2px solid black; float: left;">
             {% endif %}
           <div class="card-text" style="margin: 10px;">
-            <h1>{{school_name}}</h1>
-            <h2>{{school_addres}}</h2>
+            <h4>{{school_name}}</h4>
+            <h4>{{school_addres}}</h4>
+            <h4 style="text-align: center;">TERM {{result.term}} ACADEMIC REPORT FORM-YEAR {{result.year}}</h2>
           </div>
-          <img src="{{school_logo.url}}" alt="Your image" class="passport-image-right" style="border: 5px solid black; float: right;">
+          {% if result.student.passport %}
+          <img src="{{result.student.passport.url}}" alt="Your image" class="passport-image" style="border: 1px solid black; float: left;">
+          {% else %}
+            <img src="{% static 'user/user.jpeg' %}" alt="Your image" class="passport-image" style="border: 2px solid black; float: left;">
+            {% endif %}
         </div>
-        <h2 style="text-align: center;">TERM ___ ACADEMIC REPORT FORM-YEAR ___</h2>
       </div>
       </div>
       <div class="card-body">
-        <!--<h6 class="card-subtitle mb-2 text-muted">Student Name: John Doe</h6>
-        <p class="card-text">Class: Form 4</p>
-        <p class="card-text">Year: 2023</p>
-        <!-- Add more relevant information here -->
-
           <div class="row">
-            <span class="label">NAME:</span>
+            <span class="label">NAME: {{result.student.admin.first_name}} {{result.student.admin.last_name}}</span>
             <span class="value"> </span>
-            <span class="label">ADM.NO:</span>
+            <span class="label">ADM.NO: {{result.student}}</span>
             <span class="value">  </span>
-            <span class="label">FORM:</span>
+            <span class="label">FORM: {{result.student.current_class}}</span>
             <span class="value"> </span>
-            <span class="label">HSE:</span>
+            <span class="label">HSE: {{result.student.current_section}}</span>
             <span class="value"> </span>
           </div>
           <div class="row">
-            <span class="label">FORM POS:</span>
+            <span class="label">FORM POS: {{result.stream_pos}}</span>
             <span class="value"> </span>
-            <span class="label">OUT OF:</span>
+            <span class="label">OUT OF:{{result.stream_total}} </span>
             <span class="value">  </span>
-            <span class="label">CLASS POS:</span>
+            <span class="label">CLASS POS:{{result.overall_rank}}</span>
             <span class="value">  </span>
-            <span class="label">OUT OF:</span>
+            <span class="label">OUT OF:{{result.class_total}}</span>
             <span class="value"> </span>
-            <span class="label">MEAN GRADE:</span>
+            <span class="label">MEAN GRADE:{{result.mean_grade}}</span>
             <span class="value">  </span>
           </div>
           <div class="row">
-            <span class="label">T.MARKS:</span>
+            <span class="label">TOTAL MARKS:{{result.total_total}}</span>
             <span class="value">  </span>
-            <span class="label">M.MARK:</span>
+            <span class="label">MEAN MARK:{{result.mean_total}}</span>
             <span class="value">  </span>
-            <span class="label">T.POINTS:</span>
+            <span class="label">TOTAL POINTS:{{result.total_points}}</span>
             <span class="value">  </span>
-            <span class="label">M.POINTS:</span>
+            <span class="label">MEAN POINTS:{{result.mean_points}}</span>
             <span class="value">  </span>
           </div>
 
@@ -66,9 +64,9 @@
         <thead class="thead-light">
           <tr>
             <th>SUBJECT</th>
-            <th>SER 1/100</th>
-            <th>SER 2/100</th>
-            <th>SER 3/100</th>
+            <th>SER 1/{{result.total_student}}</th>
+            <th>SER 2/{{result.total_student}}</th>
+            <th>SER 3/{{result.total_student}}</th>
             <th>TOTAL%</th>
             <th>GRADE</th>
             <th>PNTS</th>
@@ -78,181 +76,22 @@
           </tr>
         </thead>
         <tbody>
+           {% for subject in result.subjects %}
           <tr>
-            <td>English</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{subject.subject.name}}</td>
+            <td>{{subject.calculate_subject_position}}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>{{ subject.test_score|add:subject.exam_score }}</td>
+            <td>{{subject.grade}}</td>
+            <td>{{subject.grade.points}}</td>
+            <td>{{subject.calculate_subject_position}}</td>
+            <td>{{subject.grade.comment}}</td>
+            <td>{{subject.subject.teachers.first}}</td>
           </tr>
-          <tr>
-            <td>Kiswahili</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <!-- Add more subject rows here -->
-          <tr>
-            <td>Mathematics</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Biology</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Physics</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Chemistry</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>History & Government</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Geography</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>CRE</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Bussiness Studies</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Agriculture</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          {% endfor %}
         </tbody>
       <!--</table> -->
-      <table class="table table-bordered" style="min-width: 100px; max-width: 400px;">
-        <thead class="thead-light">
-          <tr>
-            <th>KCPE MARKS</th>
-            <th>KCPE POS.</th>
-            <th>KCPE MG.</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
       <table class="table table-bordered" style="min-width: 100px; max-width: 400px;margin-left: 3%;">
         <thead class="thead-light">
           <tr>
@@ -374,24 +213,18 @@
       <div class="chart">
         <canvas id="barChart" style="min-height: 200px; height: 200px; max-height: 200px; max-width: 50%;"></canvas>
       </div>
-      <br/> <br/> <br/>
       <form>
         <p> <em>Head Teacher's Remarks - "Name of the head teacher"</em></p>
-        <textarea name = "comment" rows="5" cols="150" placeholder="Head Teacher's remarks will appear here"></textarea>
+        <p>..................................................</p>
       </form>
       <div style="text-align: center; font-weight: bold;">
         <p>Fees arreas Kshs: "Amnt will display here" Next term fees Kshs: "Amnt will display here" Total Kshs: "Amnt will display here" Sign:_______</p>
         <p>School closed on: "date"  Next Term Begins on: "date"</p>
         <p>Parent's Sign:____________________Date_________________________</p>
       </div>
-
-
       <!-- Untill here -->
-      <div class="card-footer">
-        <p class="text-muted">School Email: info@kenyanhighschool.com</p>
-      </div>
     </div>
-  </div>
+  {% endfor %}
 {% endblock content %}
 
 {% block custom_js %}

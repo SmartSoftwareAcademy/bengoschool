@@ -10,13 +10,17 @@
 {% block fullcard %}
   <div class="row">
     <div class="d-inline-block p-2  float-right">
-      <a href="#" class="btn btn-default">Export PDF</a>
+      <a href="{% url 'view_pdf' %}" class="btn btn-default">View PDF</a>
     </div>
       <div class="d-inline-block p-2  float-right">
-      <a href="#" class="btn btn-default">Export XLS</a>
+      <form method="post" action="{% url 'view-results' %}">
+        <input type="text" value="{{results}}" name="data" hidden/>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-default">Export XLS</a>
+      </form>
   </div>
 </div>
-  <div class="card overflow-auto">
+  <div class="card overflow-auto" id="transcript">
     <div class="card-header">
       <div class="text-uppercase text-center font-weight-bold">
         <div class="d-inline-block align-items-center mt-1">
@@ -75,8 +79,15 @@
           </tr>
           {% endfor %}
         </tbody>
-
       </table>
     </div>
   </div>
 {% endblock fullcard %}
+{% block custom_js %}
+<script>
+    function printResult() {
+      var element = document.getElementById("elementId");
+      window.print();
+    }
+  </script>
+{% endblock custom_js %}
