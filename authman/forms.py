@@ -88,7 +88,7 @@ class StaffForm(CustomUserForm):
     class Meta(CustomUserForm.Meta):
         model = Staff
         fields = CustomUserForm.Meta.fields + \
-            ['subject','role_number']
+            ['subject']
 
 class ParentfForm(CustomUserForm):
     def __init__(self, *args, **kwargs):
