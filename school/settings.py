@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import dj_database_url
-import os  
+import os
 from pathlib import Path
 from .juzmin import JAZZMIN_SETTINGS
 
@@ -66,6 +66,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -84,7 +85,7 @@ ROOT_URLCONF = 'school.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],  # My App Templates
+        'DIRS': ['C:/inetpub/wwwroot/bengoschool/templates'],  # My App Templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

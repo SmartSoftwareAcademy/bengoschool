@@ -11,3 +11,6 @@ Pillow
 requests
 reportlab
 xhtml2pdf
+openpyxl
+wfastcgi
+#mod_wsgi

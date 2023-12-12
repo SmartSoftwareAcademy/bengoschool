@@ -1,0 +1,24 @@
+.passport-image {
+     position: relative;
+     top: 0;
+     left: 0;
+     width: 35mm;
+     height: 45mm;
+    }
+
+    .passport-image-right {
+         position: relative;
+         top: 0;
+         right: 0;
+         width: 35mm;
+         height: 45mm
+     }
+.card-body .row span.label {
+        margin-right: 100px; 
+        font-weight: bold;
+      }
+
+ .rotated-text {
+     writing-mode: vertical-lr;  /* Rotates the text from bottom to top */
+     text-orientation: mixed;    /* Ensures correct orientation across browsers */
+     }
